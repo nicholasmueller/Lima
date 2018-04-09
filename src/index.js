@@ -1,30 +1,47 @@
-// (() => {
-//   function createElement(el, props, ...children){
-//     console.log(children);
-//   }
+import { forOwn } from 'lodash';
 
-//   window.Lima = {
-//     createElement
-//   };
-
-//   // todo: create as seperate module
-//   window.LimaDOM = {
-//     render: (el, domEl) => {
-//       domEl.appendChild(el);
-//     }
-//   }
-// })();
-
-class Lima {
-  createElement = (type, params, string) => {
-    console.log('hello', type);
-  }
+const appElement = {
+  tag: 'div',
+  props: {
+    onClick: () => alert('hello'),
+    id: 'container',
+    className: 'appElement'
+  },
+  children: [
+    {
+      tag: 'text',
+      children: ['foobar']
+    },
+  ]
 }
 
-class LimaDOM {
-  render = () => {
-    console.log('render called');
-  }
+function renderToDOM(elementToRender, locationToRender) {
+  const {
+    tag = 'div',
+    props = {},
+    children = [],
+  } = elementToRender;
+
+  // create appropriate dom element based on tag
+  const domElement = tag === 'text'
+    ? document.createTextNode('')
+    : document.createElement(tag);
+
+  // add event listeners or set props on domElement
+  forOwn(props, (value, key) => {
+    if (key.startsWith('on')) {
+      const eventType = key.toLowerCase().substring(2);
+      domElement.addEventListener(eventType, value);
+    } else {
+      domElement[key] = value;
+    }
+  });
+
+  // render children recursively
+  children.forEach(element => renderToDOM(element, domElement));
+
+  // append child to parent node
+  locationToRender.appendChild(domElement);
 }
 
-export default Lima;
+renderToDOM(appElement, document.getElementById('root'));

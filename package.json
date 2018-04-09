@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/nicholasmueller/Lima/issues"
   },
-  "homepage": "https://github.com/nicholasmueller/Lima#readme"
+  "homepage": "https://github.com/nicholasmueller/Lima#readme",
+  "dependencies": {
+    "lodash": "^4.17.5"
+  }
 }

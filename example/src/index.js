@@ -1,9 +1,6 @@
-import { helloWorld } from 'lima-react';
+// import Lima from 'lima-react';
+import Lima from '../../src/index';
+import App from './app';
 
-import style from './main.css';
-
-const hello = () => {
-  console.log('hello world!');
-}
-
-hello();
+// render app to DOM
+Lima.renderToDOM(<App />, document.getElementById('root'));
