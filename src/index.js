@@ -1,19 +1,58 @@
 import { forOwn } from 'lodash';
 
-const appElement = {
+const stringElement = {
   tag: 'div',
   props: {
     onClick: () => alert('hello'),
     id: 'container',
     className: 'appElement'
   },
+  children: 'yay'
+}
+
+const nestedElement = {
+  tag: 'div',
+  props: {},
   children: [
     {
-      tag: 'text',
-      children: ['foobar']
+      tag: 'h1',
+      props: {},
+      children: 'yay'
     },
+    {
+      tag: 'p',
+      props: {},
+      children: [
+        {
+          tag: 'div',
+          props: {},
+          children: 'hi'
+        }
+      ]
+    }
   ]
 }
+
+// https://jaketrent.com/post/how-jsx-transform-works/
+function createElement(tag = 'div', props = {}, children = []) {
+  // goal of function: create an 'appElement object' as defined above
+  if (props === null) {
+    props = {};
+  };
+  if (children === null) {
+    children = [];
+  }
+
+  if (typeof(children) === 'string') {
+    tag = 'text'
+  }
+
+  return {
+    tag,
+    props,
+    children
+  }
+};
 
 function renderToDOM(elementToRender, locationToRender) {
   const {
@@ -38,7 +77,9 @@ function renderToDOM(elementToRender, locationToRender) {
   });
 
   // render children recursively
-  children.forEach(element => renderToDOM(element, domElement));
+  if (typeof(children !== 'string')){
+    children.forEach(element => renderToDOM(element, domElement));
+  }
 
   // append child to parent node
   locationToRender.appendChild(domElement);

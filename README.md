@@ -12,3 +12,5 @@
 - Lima written and published to npm in es6
 - to run example app, run `cd example; npm install; npm start`
 - to install Lima in your project, run `npm install lima-react --save` (although it's recommended you use the real React :p)
+
+- see example app for build requirements (webpack / babel / jsx transpile, etc)
