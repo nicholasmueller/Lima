@@ -2,20 +2,32 @@
 import { Lima } from '../../src/index';
 // import App from './app';
 
+class Classed extends Lima.Component  {
+  render() {
+    return (
+      <div prop1='propuno'>
+        Hello from class!
+      </div>
+    )
+  }
+}
+
+// const Functional = () => {
+//   return (
+//     <div prop2='propdos'>
+//       Hello from function!
+//     </div>
+//   )
+// }
+
 const jsx = (
-  <h1>
+  <div prop1='hello'>
     <div>
-      Sup
-      <p>
-        Hello
-      </p>
+      <input />
     </div>
-    <div>
-      Another
-    </div>
-  </h1>
+  </div>
 )
 
-console.log(jsx);
+console.log('jsx: ', jsx);
 
-Lima.renderToDOM(jsx, document.getElementById('root'));
+// Lima.renderToDOM(App, document.getElementById('root'));
