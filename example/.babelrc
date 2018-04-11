@@ -1,10 +1,10 @@
 {
   "presets": [
-    "env"
+    "es2015-node5"
   ],
   "plugins" : [
-    ["transform-react-jsx", {
-      "pragma": "Lima.createElement"
+    ["transform-jsx", {
+      "function": "Lima.createElement"
     }]
   ]
 }
