@@ -33,25 +33,17 @@ const nestedElement = {
   ]
 }
 
-// https://jaketrent.com/post/how-jsx-transform-works/
-function createElement(tag = 'div', props = {}, children = []) {
-  // goal of function: create an 'appElement object' as defined above
-  if (props === null) {
-    props = {};
-  };
-  if (children === null) {
-    children = [];
-  }
+function createElement(tag = 'div', props = {}, ...children) {
+  (props === null || props === false) && (props = {});
+  (children === null || children === false) && (children = []);
 
-  if (typeof(children) === 'string') {
-    tag = 'text'
-  }
-
-  return {
+  const jsxObject = {
     tag,
     props,
     children
   }
+
+  return jsxObject
 };
 
 function renderToDOM(elementToRender, locationToRender) {
@@ -61,9 +53,10 @@ function renderToDOM(elementToRender, locationToRender) {
     children = [],
   } = elementToRender;
 
-  // create appropriate dom element based on tag
-  const domElement = tag === 'text'
-    ? document.createTextNode('')
+  console.log('children: ', children)
+
+  const domElement = typeof(children) === 'string'
+    ? document.createTextNode(children)
     : document.createElement(tag);
 
   // add event listeners or set props on domElement
@@ -76,13 +69,12 @@ function renderToDOM(elementToRender, locationToRender) {
     }
   });
 
-  // render children recursively
-  if (typeof(children !== 'string')){
-    children.forEach(element => renderToDOM(element, domElement));
-  }
-
   // append child to parent node
   locationToRender.appendChild(domElement);
 }
 
-renderToDOM(appElement, document.getElementById('root'));
+export const Lima = {
+  createElement,
+  renderToDOM
+}
+// renderToDOM(appElement, document.getElementById('root'));
