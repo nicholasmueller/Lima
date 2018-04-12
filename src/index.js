@@ -50,17 +50,19 @@ function selectReconciler(element) {
 
 // entry point
 function createElement({elementName, attributes, children}) {
+  console.log('create element called');
+
   let type = elementName;
   let props = attributes;
   (props === null || props === false) && (props = {});
   (children === null || children === false) && (children = []);
   props.children = children;
 
-  // package & start reconciliation
   const element = { type, props }
+  return element;
 
-  console.log('element passed to reconciler: ', element);
-  return selectReconciler(element)
+  // TODO: when do we call the reconciler????
+  // return selectReconciler(element)
 }
 
 // api export

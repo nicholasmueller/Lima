@@ -12,13 +12,13 @@ class Classed extends Lima.Component  {
   }
 }
 
-// const Functional = () => {
-//   return (
-//     <div prop2='propdos'>
-//       Hello from function!
-//     </div>
-//   )
-// }
+const Functional = () => {
+  return (
+    <div prop2='propdos'>
+      Hello from function!
+    </div>
+  )
+}
 
 const jsx = (
   <div prop1='hello'>
@@ -28,6 +28,26 @@ const jsx = (
   </div>
 )
 
+// createElements are called first
+// then entire jsx object is returned
+
+// const jsxExpanded =
+//   Lima.createElement(
+//   "div",
+//   { prop1: "hello" },
+//     createElement(
+//       "div",
+//       {},
+//         createElement(
+//           "input",
+//           {},
+//           []
+//         ),
+//     ),
+//   );
+
 console.log('jsx: ', jsx);
+// now that we have the jsx object we can call the reconciler
+// on the entire object
 
 // Lima.renderToDOM(App, document.getElementById('root'));
