@@ -1,6 +1,6 @@
-import { isLimaClass } from './helpers';
+import { isLimaClass, isLimaComponent, initialize } from './helpers';
 import Component from './component';
-import renderToDOM from './render';
+import renderDOM from './render';
 
 // mount native components (<div /> etc.)
 function mountHost(element) {
@@ -48,26 +48,33 @@ function selectReconciler(element) {
   }
 }
 
-// entry point
-function createElement({elementName, attributes, children}) {
-  console.log('create element called');
+// generic function that gets called on all jsx
+// elements that evaluate on the page
+function createElement(element) {
+  let type = element.elementName;
+  let props = element.attributes;
+  let children = element.children;
 
-  let type = elementName;
-  let props = attributes;
-  (props === null || props === false) && (props = {});
-  (children === null || children === false) && (children = []);
   props.children = children;
+  const cleaned = { type, props }
 
-  const element = { type, props }
-  return element;
+  // replace class ref by checking base Component class
+  if (isLimaComponent(cleaned)){
+    cleaned.type = Component.usertypes.filter(usertype => {
+      return usertype.name === cleaned.type;
+    })[0];
+  }
 
-  // TODO: when do we call the reconciler????
-  // return selectReconciler(element)
+  return cleaned;
 }
 
 // api export
 export const Lima = {
   Component,
   createElement,
-  renderToDOM
+  renderDOM,
+  initialize,
 }
+
+// playground
+// https://repl.it/repls/LumberingIdealisticRuntimelibrary

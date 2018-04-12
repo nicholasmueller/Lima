@@ -1,53 +1,38 @@
 // import Lima from 'lima-react';
 import { Lima } from '../../src/index';
-// import App from './app';
 
-class Classed extends Lima.Component  {
-  render() {
+class Button extends Lima.Component {
+  constructor() {
+    super(Button);
+  }
+
+  rennder() {
     return (
-      <div prop1='propuno'>
-        Hello from class!
+      <div>
+        Button
       </div>
     )
   }
 }
 
-const Functional = () => {
-  return (
-    <div prop2='propdos'>
-      Hello from function!
-    </div>
-  )
+class App extends Lima.Component  {
+  constructor() {
+    super(App);
+  }
+
+  render() {
+    return (
+      <div prop1='propuno'>
+        Hello from class!
+        <Button />
+      </div>
+    )
+  }
 }
 
-const jsx = (
-  <div prop1='hello'>
-    <div>
-      <input />
-    </div>
-  </div>
-)
-
-// createElements are called first
-// then entire jsx object is returned
-
-// const jsxExpanded =
-//   Lima.createElement(
-//   "div",
-//   { prop1: "hello" },
-//     createElement(
-//       "div",
-//       {},
-//         createElement(
-//           "input",
-//           {},
-//           []
-//         ),
-//     ),
-//   );
-
-console.log('jsx: ', jsx);
-// now that we have the jsx object we can call the reconciler
-// on the entire object
-
-// Lima.renderToDOM(App, document.getElementById('root'));
+// necessary step to make Lima aware of all custom classes
+// initialize before exports
+// Lima.initialize(Button);
+// export default Button;
+Lima.initialize(App, Button);
+Lima.renderDOM(<App />, document.getElementById('root'))
