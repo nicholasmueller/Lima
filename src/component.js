@@ -1,8 +1,8 @@
 /*
 Base Component class
-- used to create and keep track of Lima components
 - ie. class App extends Lima.Component {}
 - **important** to pass class ref in super of user created component
+- used to create and keep track of Lima components
 - can call Component.usertypes to check all user created instances
 */
 

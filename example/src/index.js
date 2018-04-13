@@ -1,15 +1,29 @@
 // import Lima from 'lima-react';
 import { Lima } from '../../src/index';
 
+class Icon extends Lima.Component {
+  constructor() {
+    super(Icon);
+  }
+
+  render() {
+    return (
+      <div>
+        I am an icon
+      </div>
+    )
+  }
+}
+
 class Button extends Lima.Component {
   constructor() {
     super(Button);
   }
 
-  rennder() {
+  render() {
     return (
       <div>
-        Button
+        Hello from Button!
       </div>
     )
   }
@@ -20,23 +34,15 @@ class App extends Lima.Component  {
     super(App);
   }
 
-  componentWillMount() {
-    console.log('props:', this.props)
-  }
-
   render() {
     return (
-      <div prop1='propuno'>
-        Hello from class!
-        <Button />
+      <div onClick={() => alert('hello!')}>
+        Hello world
       </div>
     )
   }
 }
 
-// initialize before exports
-// necessary step to make Lima aware of all custom classes
-// Lima.initialize(Button);
-// export default Button;
-Lima.initialize(App, Button);
-Lima.renderDOM(<App var1="hello"/>, document.getElementById('root'))
+// initialize all your classes!
+Lima.initialize(App, Button, Icon);
+Lima.renderDOM(<App />, document.getElementById('root'))

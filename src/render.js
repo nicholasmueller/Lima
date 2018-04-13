@@ -1,18 +1,14 @@
-/*
-renderDOM mounts the entire tree to the actual dom
-*/
+// renderDOM creates internal instances and mounts nodes to the dom
 
-import { forOwn } from 'lodash';
+import { forOwn, isArray } from 'lodash';
 import { isLimaComponent } from './helpers';
 
-
 class CompositeComponent {
-  // will always be a user defined class component
   constructor(element) {
     this.currentElement = element;
-    this.renderedComponent = null;
-    this.renderedElement = null;
+    this.renderedJsx = null;
     this.publicInstance = null;
+    this.internalInstance = null;
   }
 
   getPublicInstance() {
@@ -20,33 +16,83 @@ class CompositeComponent {
   }
 
   mount() {
-    // create instance of current element
+    // 1. create public instance of current element (this is the class the user has defined)
+    // 2. attach props from the jsx to the instance (make it available to public instance before cwm)
+    // 3. call first lifecycle if exists
+    // 4. call the instance render to get the embedded jsx object
     this.publicInstance = new this.currentElement.type();
-    // attach props to instance (make it available to public instance before cwm)
     this.publicInstance.props = this.currentElement.props;
-    // call first lifecycle if exists
-    if (this.publicInstance.componentWillMount) {
-      this.publicInstance.componentWillMount();
-    }
-    // call the render to get embedded jsx object
-    this.renderedElement = this.publicInstance.render();
+    this.publicInstance.componentWillMount && this.publicInstance.componentWillMount();
+    this.renderedJsx = this.publicInstance.render();
 
-    // instantiate children
-    console.log('renderedElement: ', this.renderedElement);
-    this.renderedComponent = instantiateComponent(this.renderedElement);
-    console.log('renderedComponent: ', this.renderedComponent);
-    return this.renderedComponent.mount();
+    // instantiate child (explains why class Component can only have one wrapping div)
+    this.internalInstance = instantiateComponent(this.renderedJsx);
+    return this.internalInstance.mount();
+  }
+
+  unmount() {
+    this.publicInstance && this.publicInstance.componentWillUnmount
+      && this.publicInstance.componentWillUnmount();
+    this.internalInstance.unmount();
   }
 }
 
 class DOMComponent {
-  // will always be a native component : div/h1/etc
   constructor(element) {
+    this.currentElement = element;
+    this.internalInstances = [];
+    this.node = null;
+  }
 
+  getPublicInstance() {
+    return this.node;
+  }
+
+  mount() {
+    const children = this.currentElement.props.children || [];
+    if(!isArray(children)) {
+      children = [children];
+    }
+
+    this.node = document.createElement(this.currentElement.type)
+
+    // add event listeners and/or set attributes on node
+    forOwn(this.currentElement.props, (value, key) => {
+      if (key.startsWith('on')) {
+        const eventType = key.toLowerCase().substring(2);
+        this.node.addEventListener(eventType, value);
+      }
+      if (key !== 'children' && !key.startsWith('on')) {
+        this.node.setAttribute(key, value);
+      }
+      if (key === 'children') {
+        value.forEach(child => {
+          if (typeof child === 'string') {
+            this.node.textContent = child;
+          } else {
+            const internalInstance = instantiateComponent(child);
+            this.internalInstances.push(internalInstance);
+          }
+        });
+
+        const childNodes = [];
+        this.internalInstances.forEach(instance => {
+          const node = instance.mount();
+          typeof node !== 'undefined' && childNodes.push(node);
+        });
+        childNodes.forEach(node => {
+          this.node.appendChild(node);
+        });
+      }
+    });
+    return this.node;
+  }
+
+  unmount() {
+    this.internalInstances.forEach(instance => instance.unmount());
   }
 }
 
-// figures out which class to instantiate
 function instantiateComponent(element) {
   if (isLimaComponent(element)) {
     return new CompositeComponent(element);
@@ -55,47 +101,15 @@ function instantiateComponent(element) {
   }
 }
 
-// mountTree in implementation notes
 function renderDOM(element, rootNode) {
-  const rootComponent = instantiateComponent(element)
+  const rootInternalInstance = instantiateComponent(element)
 
-  console.log('rootComponent: ', rootComponent);
-
-  // call mount in the rootcomponent class
-  const node = rootComponent.mount();
+  // this mount starts the recursive process
+  const node = rootInternalInstance.mount();
   rootNode.appendChild(node);
 
-  return rootComponent.getPublicInstance();
+  // the value of this return is insignificant
+  return rootInternalInstance.getPublicInstance();
 }
-
-
-
-//   const {
-//     type,
-//     props
-//   } = element;
-
-//   const domElement = document.createElement(type);
-
-//   // add event listeners or set attributes on domElement
-//   forOwn(props, (value, key) => {
-//     if (key.startsWith('on')) {
-//       const eventType = key.toLowerCase().substring(2);
-//       domElement.addEventListener(eventType, value);
-//     }
-//     if (key !== 'children') {
-//       domElement.setAttribute(key, value)
-//     }
-//     if (key === 'children') {
-//       value.forEach(child => {
-//         // TODO: support for textcontent needed...
-//         // recurse through children here
-//         const childNode = selectReconciler(child);
-//         domElement.appendChild(childNode);
-//       })
-//     }
-//   });
-//   return domElement;
-// }
 
 export default renderDOM;
