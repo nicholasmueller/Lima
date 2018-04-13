@@ -11,9 +11,10 @@ export function isLimaClass(element) {
 
 // we can check if jsx is user defined if type is capitalized
 export function isLimaComponent(element) {
-  return typeof element.type === 'string'
-    ? element.type[0] === element.type[0].toUpperCase()
-    : true;
+  if (typeof element.type === 'string') {
+    return element.type[0] === element.type[0].toUpperCase()
+  }
+  return typeof element.type === 'function';
 }
 
 // function used to initialize all user created components to make

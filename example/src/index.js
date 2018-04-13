@@ -20,6 +20,10 @@ class App extends Lima.Component  {
     super(App);
   }
 
+  componentWillMount() {
+    console.log('props:', this.props)
+  }
+
   render() {
     return (
       <div prop1='propuno'>
@@ -30,9 +34,9 @@ class App extends Lima.Component  {
   }
 }
 
-// necessary step to make Lima aware of all custom classes
 // initialize before exports
+// necessary step to make Lima aware of all custom classes
 // Lima.initialize(Button);
 // export default Button;
 Lima.initialize(App, Button);
-Lima.renderDOM(<App />, document.getElementById('root'))
+Lima.renderDOM(<App var1="hello"/>, document.getElementById('root'))

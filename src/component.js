@@ -3,7 +3,7 @@ Base Component class
 - used to create and keep track of Lima components
 - ie. class App extends Lima.Component {}
 - **important** to pass class ref in super of user created component
-- can call Component.children to check all user created instances
+- can call Component.usertypes to check all user created instances
 */
 
 class Component {

@@ -58,7 +58,7 @@ function createElement(element) {
   props.children = children;
   const cleaned = { type, props }
 
-  // replace class ref by checking base Component class
+  // replace class refs by checking base Component class
   if (isLimaComponent(cleaned)){
     cleaned.type = Component.usertypes.filter(usertype => {
       return usertype.name === cleaned.type;
@@ -75,6 +75,3 @@ export const Lima = {
   renderDOM,
   initialize,
 }
-
-// playground
-// https://repl.it/repls/LumberingIdealisticRuntimelibrary

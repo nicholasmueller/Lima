@@ -11,6 +11,7 @@ class CompositeComponent {
   constructor(element) {
     this.currentElement = element;
     this.renderedComponent = null;
+    this.renderedElement = null;
     this.publicInstance = null;
   }
 
@@ -19,12 +20,27 @@ class CompositeComponent {
   }
 
   mount() {
-    this.publicInstance = new element();
-    console.log('public: ', this.publicInstance);
+    // create instance of current element
+    this.publicInstance = new this.currentElement.type();
+    // attach props to instance (make it available to public instance before cwm)
+    this.publicInstance.props = this.currentElement.props;
+    // call first lifecycle if exists
+    if (this.publicInstance.componentWillMount) {
+      this.publicInstance.componentWillMount();
+    }
+    // call the render to get embedded jsx object
+    this.renderedElement = this.publicInstance.render();
+
+    // instantiate children
+    console.log('renderedElement: ', this.renderedElement);
+    this.renderedComponent = instantiateComponent(this.renderedElement);
+    console.log('renderedComponent: ', this.renderedComponent);
+    return this.renderedComponent.mount();
   }
 }
 
 class DOMComponent {
+  // will always be a native component : div/h1/etc
   constructor(element) {
 
   }
@@ -32,8 +48,6 @@ class DOMComponent {
 
 // figures out which class to instantiate
 function instantiateComponent(element) {
-  console.log('instantiateComponent: ', element);
-
   if (isLimaComponent(element)) {
     return new CompositeComponent(element);
   } else {
@@ -43,7 +57,6 @@ function instantiateComponent(element) {
 
 // mountTree in implementation notes
 function renderDOM(element, rootNode) {
-  // element is required to be a class instance that has a render method
   const rootComponent = instantiateComponent(element)
 
   console.log('rootComponent: ', rootComponent);
