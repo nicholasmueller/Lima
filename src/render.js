@@ -77,6 +77,7 @@ class DOMComponent {
 
         const childNodes = [];
         this.internalInstances.forEach(instance => {
+          // mount pushes another recursive call onto the stack
           const node = instance.mount();
           typeof node !== 'undefined' && childNodes.push(node);
         });
@@ -85,10 +86,12 @@ class DOMComponent {
         });
       }
     });
+    // if this returns, we can pop down the recursive stack
     return this.node;
   }
 
   unmount() {
+    // recursive if instance is a DOMComponent
     this.internalInstances.forEach(instance => instance.unmount());
   }
 }
@@ -102,14 +105,26 @@ function instantiateComponent(element) {
 }
 
 function renderDOM(element, rootNode) {
+  // destroy existing tree if exists
+  rootNode.firstChild && unmountDOM(rootNode);
+
   const rootInternalInstance = instantiateComponent(element)
 
   // this mount starts the recursive process
   const node = rootInternalInstance.mount();
+  node._internalInstance = rootInternalInstance;
   rootNode.appendChild(node);
 
   // the value of this return is insignificant
   return rootInternalInstance.getPublicInstance();
+}
+
+function unmountDOM(rootNode) {
+  console.log('unmountDOM called');
+  const node = rootNode.firstChild;
+  const rootInternalInstance = node._internalInstance;
+  rootInternalInstance.unmount();
+  rootNode.innerHTML = '';
 }
 
 export default renderDOM;
