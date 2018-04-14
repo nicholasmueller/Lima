@@ -23,3 +23,7 @@ export function isLimaComponent(element) {
 export function initialize(...components){
   components.forEach(component => new component);
 }
+
+export function uniqueID() {
+  return Math.random().toString(36).substring(2);
+}

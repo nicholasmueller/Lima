@@ -6,6 +6,9 @@ Base Component class
 - can call Component.usertypes to check all user created instances
 */
 
+import { reRender } from './render';
+import { uniqueID } from './helpers';
+
 class Component {
   // flag to identify Lima components
   static get isLimaClass() {
@@ -15,7 +18,16 @@ class Component {
   // keep track of user created components
   constructor(ref) {
     !Component.usertypes.includes(ref)
-      && Component.usertypes.push(ref)
+      && Component.usertypes.push(ref);
+
+    // assign unique id to instance on creation
+    // used to identify instances
+    this.publicID = uniqueID();
+  }
+
+  setState(newState) {
+    // call reRender method in render module passing element ref
+    reRender(this, newState);
   }
 }
 Component.usertypes = [];

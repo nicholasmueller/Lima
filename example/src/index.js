@@ -22,7 +22,9 @@ class Button extends Lima.Component {
 
   render() {
     return (
-      <div>
+      <div
+        onClick={() => this.setState({ clicked: true })}
+      >
         Hello from Button!
       </div>
     )
@@ -49,7 +51,9 @@ class App extends Lima.Component  {
   }
 
   increaseCounter() {
-    this.state.counter += 1;
+    this.setState({
+      counter: 2
+    });
     console.log('counter updated...', this.state.counter);
   }
 

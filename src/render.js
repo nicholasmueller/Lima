@@ -1,7 +1,7 @@
 // renderDOM creates internal instances and mounts nodes to the dom
 
 import { forOwn, isArray } from 'lodash';
-import { isLimaComponent } from './helpers';
+import { isLimaComponent, uniqueID } from './helpers';
 import { errors } from './errors';
 
 class CompositeComponent {
@@ -58,6 +58,7 @@ class DOMComponent {
     this.currentElement = element;
     this.internalInstances = [];
     this.node = null;
+    this.privateID = uniqueID();
   }
 
   getPublicInstance() {
@@ -75,6 +76,7 @@ class DOMComponent {
     }
 
     this.node = document.createElement(this.currentElement.type)
+    this.node.setAttribute('nodeID', uniqueID());
 
     // add event listeners and/or set attributes on node
     forOwn(this.currentElement.props, (value, key) => {
@@ -110,6 +112,10 @@ class DOMComponent {
         this.internalInstances.forEach(instance => {
           // mount pushes another recursive call onto the stack
           const node = instance.mount();
+
+          // not sure if below _internalInstance is useful yet...
+          node._internalInstance = instance;
+
           typeof node !== 'undefined' && childNodes.push(node);
         });
         childNodes.forEach(node => {
@@ -158,9 +164,16 @@ function unmountDOM(rootNode) {
   const node = rootNode.firstChild;
   const rootInternalInstance = node._internalInstance;
 
-  // erm.. what the hell does unmount do?
+  // erm.. what the hell does unmount here do?
   rootInternalInstance.unmount();
   rootNode.innerHTML = '';
+}
+
+export function reRender(element, newState) {
+  // TODO:
+  // set an _internalInstance to node on mount (like in renderDOM)
+  // that way you can access methods on the internal instance through a dom node reference...
+  console.log('element that updated state', element, newState);
 }
 
 export default renderDOM;
