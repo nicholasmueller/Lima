@@ -32,12 +32,35 @@ class Button extends Lima.Component {
 class App extends Lima.Component  {
   constructor() {
     super(App);
+    this.styles = {
+      container: {
+        backgroundColor: 'green',
+        color: 'white',
+      },
+      innerContainer: {
+        color: 'red',
+        fontWeight: 'bold',
+      }
+    }
+  }
+
+  handleClick() {
+    console.log('hello');
   }
 
   render() {
     return (
-      <div onClick={() => alert('hello!')}>
-        Hello world
+      <div
+        style={this.styles.container}
+      >
+        <Icon />
+        <div
+          style={this.styles.innerContainer}
+          onClick={() => this.handleClick()}
+        >
+          Hello world
+        </div>
+        <Button />
       </div>
     )
   }

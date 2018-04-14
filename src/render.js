@@ -15,6 +15,21 @@ class CompositeComponent {
     return this.publicInstance;
   }
 
+  receive(nextElement) {
+    const prevProps = this.currentElement.props;
+    const prevInternalInstance = this.internalInstance;
+    const prevRenderedComponent = prevInternalInstance.currentElement;
+
+    // update this
+    this.currentElement = nextElement;
+    this.publicInstance.componentWillUpdate
+      && this.publicInstance.componentWillUpdate(nextElement.props);
+    this.publicInstance.props = nextElement.props;
+    // call rerender
+    const nextRenderedElement = this.publicInstance.render();
+
+  }
+
   mount() {
     // 1. create public instance of current element (this is the class the user has defined)
     // 2. attach props from the jsx to the instance (make it available to public instance before cwm)
@@ -48,6 +63,10 @@ class DOMComponent {
     return this.node;
   }
 
+  receive(nextElement) {
+
+  }
+
   mount() {
     const children = this.currentElement.props.children || [];
     if(!isArray(children)) {
@@ -62,7 +81,17 @@ class DOMComponent {
         const eventType = key.toLowerCase().substring(2);
         this.node.addEventListener(eventType, value);
       }
-      if (key !== 'children' && !key.startsWith('on')) {
+      if (key === 'style') {
+        forOwn(value, (_value, key) => {
+          this.node.style[key] = _value;
+        });
+      }
+      if (
+        key !== 'children'
+        && !key.startsWith('on')
+        && key !== 'style'
+      ) {
+        // handle styles differently
         this.node.setAttribute(key, value);
       }
       if (key === 'children') {
@@ -92,7 +121,10 @@ class DOMComponent {
 
   unmount() {
     // recursive if instance is a DOMComponent
-    this.internalInstances.forEach(instance => instance.unmount());
+    this.internalInstances.forEach(instance => {
+      // doesnt do anything usefull here...
+      instance.unmount()
+    });
   }
 }
 
@@ -123,6 +155,8 @@ function unmountDOM(rootNode) {
   console.log('unmountDOM called');
   const node = rootNode.firstChild;
   const rootInternalInstance = node._internalInstance;
+
+  // erm.. what the hell does unmount do?
   rootInternalInstance.unmount();
   rootNode.innerHTML = '';
 }
