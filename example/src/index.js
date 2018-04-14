@@ -42,13 +42,19 @@ class App extends Lima.Component  {
         fontWeight: 'bold',
       }
     }
+
+    this.state = {
+      counter: 1
+    }
   }
 
-  handleClick() {
-    console.log('hello');
+  increaseCounter() {
+    this.state.counter += 1;
+    console.log('counter updated...', this.state.counter);
   }
 
   render() {
+    console.log(this.state.counter)
     return (
       <div
         style={this.styles.container}
@@ -56,9 +62,9 @@ class App extends Lima.Component  {
         <Icon />
         <div
           style={this.styles.innerContainer}
-          onClick={() => this.handleClick()}
+          onClick={() => this.increaseCounter()}
         >
-          Hello world
+          {this.state.counter}
         </div>
         <Button />
       </div>

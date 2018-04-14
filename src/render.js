@@ -2,6 +2,7 @@
 
 import { forOwn, isArray } from 'lodash';
 import { isLimaComponent } from './helpers';
+import { errors } from './errors';
 
 class CompositeComponent {
   constructor(element) {
@@ -91,16 +92,17 @@ class DOMComponent {
         && !key.startsWith('on')
         && key !== 'style'
       ) {
-        // handle styles differently
         this.node.setAttribute(key, value);
       }
       if (key === 'children') {
         value.forEach(child => {
-          if (typeof child === 'string') {
+          if (typeof child === 'string' || typeof child === 'number') {
             this.node.textContent = child;
-          } else {
+          } else if ('type' in child) {
             const internalInstance = instantiateComponent(child);
             this.internalInstances.push(internalInstance);
+          } else {
+            errors.invalidObjectChild(child);
           }
         });
 
