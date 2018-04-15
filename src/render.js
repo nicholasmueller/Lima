@@ -4,6 +4,8 @@ import { forOwn, isArray } from 'lodash';
 import { isLimaComponent, uniqueID } from './helpers';
 import { errors } from './errors';
 
+var globalTree;
+
 class CompositeComponent {
   constructor(element) {
     this.currentElement = element;
@@ -14,6 +16,10 @@ class CompositeComponent {
 
   getPublicInstance() {
     return this.publicInstance;
+  }
+
+  getHostNode() {
+    return this.internalInstance.getHostNode();
   }
 
   receive(nextElement) {
@@ -28,7 +34,13 @@ class CompositeComponent {
     this.publicInstance.props = nextElement.props;
     // call rerender
     const nextRenderedElement = this.publicInstance.render();
+  }
 
+  shouldUpdate(updatingInstance, newState) {
+    if(updatingInstance.publicID === this.publicInstance.publicID) {
+      // this is the component that needs to update
+      console.log('found me!');
+    }
   }
 
   mount() {
@@ -58,10 +70,13 @@ class DOMComponent {
     this.currentElement = element;
     this.internalInstances = [];
     this.node = null;
-    this.privateID = uniqueID();
   }
 
   getPublicInstance() {
+    return this.node;
+  }
+
+  getHostNode() {
     return this.node;
   }
 
@@ -155,6 +170,9 @@ function renderDOM(element, rootNode) {
   node._internalInstance = rootInternalInstance;
   rootNode.appendChild(node);
 
+  // save entire tree to global object
+  globalTree = rootNode.firstChild;
+
   // the value of this return is insignificant
   return rootInternalInstance.getPublicInstance();
 }
@@ -169,11 +187,17 @@ function unmountDOM(rootNode) {
   rootNode.innerHTML = '';
 }
 
-export function reRender(element, newState) {
-  // TODO:
-  // set an _internalInstance to node on mount (like in renderDOM)
-  // that way you can access methods on the internal instance through a dom node reference...
-  console.log('element that updated state', element, newState);
+export function updateTree(element, newState) {
+  const internalInstanceTree = globalTree._internalInstance;
+  const elementToUpdate = element.publicID;
+
+  console.log(internalInstanceTree)
+  // walk internal instance tree
+  // at each level, check if publicInstance.publicID matches elementToUpdate
+  // if not, go into internalInstance.internalInstances
+  // loop through each child, checking their publicInstance.publicID
+
+  // once we match, then we can update that instance py passing in our new state
 }
 
 export default renderDOM;

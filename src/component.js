@@ -6,7 +6,7 @@ Base Component class
 - can call Component.usertypes to check all user created instances
 */
 
-import { reRender } from './render';
+import { updateTree } from './render';
 import { uniqueID } from './helpers';
 
 class Component {
@@ -21,13 +21,13 @@ class Component {
       && Component.usertypes.push(ref);
 
     // assign unique id to instance on creation
-    // used to identify instances
+    // used to identify instances internally
     this.publicID = uniqueID();
   }
 
   setState(newState) {
     // call reRender method in render module passing element ref
-    reRender(this, newState);
+    updateTree(this, newState);
   }
 }
 Component.usertypes = [];
