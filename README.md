@@ -1,9 +1,8 @@
-# Motivation :cat2:
+# Lima :cat2:
 - Lima is my rewrite of React, in it's simplest form
-- I used React's own implementation notes as a guide: https://reactjs.org/docs/implementation-notes.html; however, most of the core features are unique to Lima.
-
-- I wrote this as an attempt to better understand what goes on under the hood in React.
-- ...and named it after my foster cat
+  - I used React's own implementation notes as a guide: https://reactjs.org/docs/implementation-notes.html; however, most of the core features are unique to Lima.
+  - I wrote this as an attempt to better understand what goes on under the hood in React.
+  - ...and named it after my foster cat
 
 # Files
 - example application using Lima in /example/src
