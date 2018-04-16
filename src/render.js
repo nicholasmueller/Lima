@@ -1,6 +1,6 @@
 // renderDOM creates internal instances and mounts nodes to the dom
 
-import { forOwn, isArray, merge } from 'lodash';
+import { forOwn, forEach, isArray, merge } from 'lodash';
 import { isLimaComponent, uniqueID } from './helpers';
 import { errors } from './errors';
 
@@ -119,15 +119,19 @@ class DOMComponent {
           typeof node !== 'undefined' && childNodes.push(node);
         });
 
-        // if an update, clear children before appending updated nodes
-        // TODO: clearing child nodes is not a good solution
-        if (!initialMount) {
-          console.log(this.node)
-          this.node.innerHTML = '';
+        // replace child node if type/attributes/etc are different on state update
+        if (!initialMount && this.node.hasChildNodes()) {
+          const currentChildren = this.node.childNodes;
+          currentChildren.forEach((currentChild, index) => {
+            if (!currentChild.isEqualNode(childNodes[index])) {
+              currentChild.replaceWith(childNodes[index])
+            }
+          })
+        } else {
+          childNodes.forEach(node => {
+            this.node.appendChild(node);
+          });
         }
-        childNodes.forEach(node => {
-          this.node.appendChild(node);
-        });
       }
     });
     // if this returns, we can pop down the recursive stack
