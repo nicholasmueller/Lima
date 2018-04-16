@@ -8,8 +8,8 @@ class Icon extends Lima.Component {
 
   render() {
     return (
-      <div>
-        I am an icon
+      <div onClick={() => console.log('hello')}>
+        I
       </div>
     )
   }
@@ -18,14 +18,55 @@ class Icon extends Lima.Component {
 class Button extends Lima.Component {
   constructor() {
     super(Button);
+
+    this.styles = {
+      innerContainer: {
+        color: 'red',
+        fontWeight: 'bold',
+        padding: '10px',
+        border: '1px solid black'
+      }
+    }
+
+    this.state = {
+      counter: 1
+    }
+  }
+
+  componentWillUpdate() {
+    // do something before rerender
+  }
+
+  increaseCounter() {
+    this.setState({
+      counter: this.state.counter + 1
+    });
+  }
+
+  decreaseCounter() {
+    this.setState({
+      counter: this.state.counter - 1
+    });
   }
 
   render() {
     return (
-      <div
-        onClick={() => this.setState({ clicked: true })}
-      >
-        Hello from Button!
+      <div>
+        <div
+          onClick={() => this.increaseCounter()}
+          style={this.styles.innerContainer}
+        >
+          +
+        </div>
+        <div>
+          {this.state.counter}
+        </div>
+        <div
+          onClick={() => this.decreaseCounter()}
+          style={this.styles.innerContainer}
+        >
+          -
+        </div>
       </div>
     )
   }
@@ -36,39 +77,15 @@ class App extends Lima.Component  {
     super(App);
     this.styles = {
       container: {
-        backgroundColor: 'green',
-        color: 'white',
+        color: 'black',
       },
-      innerContainer: {
-        color: 'red',
-        fontWeight: 'bold',
-      }
     }
-
-    this.state = {
-      counter: 1
-    }
-  }
-
-  increaseCounter() {
-    this.setState({
-      counter: 2
-    });
-    console.log('counter updated...', this.state.counter);
   }
 
   render() {
     return (
-      <div
-        style={this.styles.container}
-      >
+      <div style={this.styles.container}>
         <Icon />
-        <div
-          style={this.styles.innerContainer}
-          onClick={() => this.increaseCounter()}
-        >
-          {this.state.counter}
-        </div>
         <Button />
       </div>
     )
