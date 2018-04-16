@@ -170,7 +170,7 @@ function renderDOM(element, rootNode) {
   node._internalInstance = rootInternalInstance;
   rootNode.appendChild(node);
 
-  // save entire tree to global object
+  // save the entire tree to global object
   globalTree = rootNode.firstChild;
 
   // the value of this return is insignificant
@@ -187,16 +187,44 @@ function unmountDOM(rootNode) {
   rootNode.innerHTML = '';
 }
 
+// recursively walk the tree to find instance matching id
+function walkTree(tree, id) {
+  // base case
+  if(tree.publicInstance) {
+    if(id === tree.publicInstance.publicID) {
+      console.log('matched!: ', tree);
+      return tree;
+    }
+  }
+
+  if(tree.internalInstances && tree.internalInstances.length > 0) {
+    tree.internalInstances.forEach(instance => {
+      const matched = walkTree(instance, id);
+      if (matched !== 'undefined') {
+        return matched;
+      }
+    })
+  } else if (tree.internalInstance) {
+    return walkTree(tree.internalInstance, id);
+  } else {
+    console.log('oops... nothing in this dom node');
+  }
+}
+
 export function updateTree(element, newState) {
+  // invoked from setState from Component baseclass
   const internalInstanceTree = globalTree._internalInstance;
   const elementToUpdate = element.publicID;
 
-  console.log(internalInstanceTree)
+  console.log('rootTree: ', internalInstanceTree);
+  const match = walkTree(internalInstanceTree, elementToUpdate);
+  console.log('element: ', elementToUpdate)
+  console.log('match: ', match);
+
   // walk internal instance tree
   // at each level, check if publicInstance.publicID matches elementToUpdate
   // if not, go into internalInstance.internalInstances
   // loop through each child, checking their publicInstance.publicID
-
   // once we match, then we can update that instance py passing in our new state
 }
 

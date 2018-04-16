@@ -58,7 +58,6 @@ class App extends Lima.Component  {
   }
 
   render() {
-    console.log(this.state.counter)
     return (
       <div
         style={this.styles.container}
