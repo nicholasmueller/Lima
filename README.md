@@ -17,7 +17,9 @@
 # Features & API
 - Lima's API is slightly different from React (born out of my own incremental implementation):
   - You can only write class components - that extend the Lima.Component base class (functional components intentionally left out to simplify the code)
-  - Lima requires you to "initialize" your components before RenderDOM is invoked. Also for each component, you have to pass a self reference to super in the constructor (this is done so I can keep track of instances internally as the jsx transpiler loses track of class references as they are transformed to strings... so I store the references to a static array on the Component base class.)
+  - Lima requires you to "initialize" your components before RenderDOM is invoked.
+  Also for each component, you have to pass a self reference to super in the constructor (this is done so I can keep track of instances internally as the jsx transpiler loses track of class references as they are transformed to strings... so I store the references to a static array on the Component base class.)
+  - Lima can't handle self-closing tags on native elements, like input etc. so make sure you explicitly close these tags... <input></input>
 
 # Roadmap & Goals
 - 'Bake-in' a react-router rewrite

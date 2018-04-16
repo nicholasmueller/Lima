@@ -1,97 +1,72 @@
 // import Lima from 'lima-react';
 import { Lima } from '../../src/index';
 
-class Icon extends Lima.Component {
-  constructor() {
-    super(Icon);
-  }
+import Text from './components/Text';
+import Button from './components/Button';
+import Input from './components/Input';
+import List from './components/List';
 
-  render() {
-    return (
-      <div onClick={() => console.log('hello')}>
-        I
-      </div>
-    )
-  }
-}
-
-class Button extends Lima.Component {
-  constructor() {
-    super(Button);
-
-    this.styles = {
-      innerContainer: {
-        color: 'red',
-        fontWeight: 'bold',
-        padding: '10px',
-        border: '1px solid black'
-      }
-    }
-
-    this.state = {
-      counter: 1
-    }
-  }
-
-  componentWillUpdate() {
-    // do something before rerender
-  }
-
-  increaseCounter() {
-    this.setState({
-      counter: this.state.counter + 1
-    });
-  }
-
-  decreaseCounter() {
-    this.setState({
-      counter: this.state.counter - 1
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        <div
-          onClick={() => this.increaseCounter()}
-          style={this.styles.innerContainer}
-        >
-          +
-        </div>
-        <div>
-          {this.state.counter}
-        </div>
-        <div
-          onClick={() => this.decreaseCounter()}
-          style={this.styles.innerContainer}
-        >
-          -
-        </div>
-      </div>
-    )
-  }
-}
-
-class App extends Lima.Component  {
+class App extends Lima.Component {
   constructor() {
     super(App);
     this.styles = {
       container: {
-        color: 'black',
+        border: '1px solid grey',
+        borderRadius: '5px',
+        padding: '20px',
+        margin: '20px',
+        maxWidth: '200px',
       },
     }
+
+    this.state = {
+      todoInput: '',
+      todoList: ['john', 'bob', 'mary'],
+    }
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState({
+      todoList: this.state.todoList.push(this.state.todoInput)
+    })
+  }
+
+  handleInputChange(e) {
+    this.setState({
+      todoInput: e.target.value,
+    })
+  }
+
+  deleteItem(item) {
+    console.log('delete: ', item);
   }
 
   render() {
     return (
       <div style={this.styles.container}>
-        <Icon />
-        <Button />
+        <div>
+          <Text text="To Do: "/>
+          <Input
+            placeholder="Add a todo..."
+            onChange={this.handleInputChange}
+            value={this.state.todoInput}
+          />
+          <Button
+            text="Add"
+            handleClick={this.handleClick}
+          />
+          <List
+            data={this.state.todoList}
+            deleteItem={this.deleteItem}
+          />
+        </div>
       </div>
     )
   }
 }
 
-// initialize all your classes!
-Lima.initialize(App, Button, Icon);
+Lima.initialize(App);
 Lima.renderDOM(<App />, document.getElementById('root'))

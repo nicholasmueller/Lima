@@ -18,7 +18,6 @@ function createElement(element) {
       return usertype.name === cleaned.type;
     })[0];
   }
-
   return cleaned;
 }
 

@@ -68,6 +68,11 @@ class DOMComponent {
     // convenience flag to signal if an update mount
     let initialMount = (typeof newJsx === 'undefined');
 
+    // hack for handling a weird undefined render...
+    if (typeof this.currentElement.type === 'undefined') {
+      return;
+    }
+
     if (initialMount) {
       this.node = document.createElement(this.currentElement.type)
     } else {
@@ -138,6 +143,7 @@ class DOMComponent {
     return this.node;
   }
 
+  // TODO: implement unmount
   unmount() {
     // recursive if instance is a DOMComponent
     this.internalInstances.forEach(instance => {
