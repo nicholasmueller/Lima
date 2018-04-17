@@ -24,8 +24,9 @@ class App extends Lima.Component {
       todoList: ['john', 'bob', 'mary'],
     }
 
-    this.handleInputChange = this.handleInputChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
   }
 
   handleClick() {

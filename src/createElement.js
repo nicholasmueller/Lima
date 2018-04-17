@@ -10,6 +10,21 @@ function createElement(element) {
 
   // add children to props object
   props.children = children;
+
+  // clean children passed as an array (from state objects, etc)
+  props.children && props.children.forEach(child => {
+    if(Array.isArray(child)) {
+      child.forEach(element => {
+        props.children.push(element);
+      });
+    }
+  });
+
+  // filter out the array
+  if(props.children) {
+    props.children = props.children.filter(child => !Array.isArray(child));
+  }
+
   const cleaned = { type, props }
 
   // replace string class refs by checking base Component class
