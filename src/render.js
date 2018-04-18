@@ -65,13 +65,13 @@ class DOMComponent {
   }
 
   mount(newJsx) {
-    // convenience flag to signal if an update mount
-    let initialMount = (typeof newJsx === 'undefined');
-
-    // hack for handling a weird undefined render...
+    // ignore undefined elements that creep in
     if (typeof this.currentElement.type === 'undefined') {
       return;
     }
+
+    // convenience flag to signal if an update mount
+    let initialMount = (typeof newJsx === 'undefined');
 
     if (initialMount) {
       this.node = document.createElement(this.currentElement.type)
@@ -129,6 +129,7 @@ class DOMComponent {
           const currentChildren = this.node.childNodes;
           currentChildren.forEach((currentChild, index) => {
             if (!currentChild.isEqualNode(childNodes[index])) {
+              // componentwillupdate somehow needs to be hooked here...
               currentChild.replaceWith(childNodes[index])
             }
           })

@@ -11,7 +11,7 @@ function createElement(element) {
   // add children to props object
   props.children = children;
 
-  // clean children passed as an array (from state objects, etc)
+  // clean children passed as an array (usually from from state objects)
   props.children && props.children.forEach(child => {
     if(Array.isArray(child)) {
       child.forEach(element => {
@@ -20,7 +20,7 @@ function createElement(element) {
     }
   });
 
-  // filter out the array
+  // filter out arrays from props.children
   if(props.children) {
     props.children = props.children.filter(child => !Array.isArray(child));
   }
@@ -33,6 +33,7 @@ function createElement(element) {
       return usertype.name === cleaned.type;
     })[0];
   }
+
   return cleaned;
 }
 
