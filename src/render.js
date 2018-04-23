@@ -1,6 +1,6 @@
 // renderDOM creates internal instances and mounts nodes to the dom
 
-import { forOwn, forEach, isArray, merge, cloneDeep } from 'lodash';
+import { forOwn, forEach, isArray, cloneDeep } from 'lodash';
 import { isLimaComponent, uniqueID } from './helpers';
 import { errors } from './errors';
 
@@ -211,10 +211,10 @@ function walkTree(tree, id) {
   }
 
   if(tree.internalInstances && tree.internalInstances.length > 0) {
-    let result = null;
+    let result = [];
     tree.internalInstances.forEach(instance => {
       if(instance.hasOwnProperty('publicInstance')) {
-        result = walkTree(instance, id);
+        result.push(walkTree(instance, id));
       }
     });
     return result;
@@ -222,6 +222,7 @@ function walkTree(tree, id) {
     // recurse and push another stack frame
     return walkTree(tree.internalInstance, id);
   } else {
+    console.warn('oops, check walkTree()');
     return null;
   }
 }
@@ -231,7 +232,13 @@ export function updateTree(element, stateFunc) {
   const internalInstanceTree = globalTree._internalInstance;
   const elementToUpdate = element.publicID;
 
-  const matchedInstance = walkTree(internalInstanceTree, elementToUpdate);
+  const matchedInstances = walkTree(internalInstanceTree, elementToUpdate);
+  const matchedInstance = matchedInstances.filter(instance => {
+    if (instance.hasOwnProperty('publicInstance')) {
+      return instance.publicInstance.publicID === elementToUpdate;
+    }
+  })[0];
+
   // sanity check to make sure we are actually matching
   if (matchedInstance.publicInstance.publicID !== elementToUpdate) {
     console.error('shit... match is off. check walkTree()');

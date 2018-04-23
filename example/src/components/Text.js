@@ -7,6 +7,7 @@ class Text extends Lima.Component {
     this.styles = {
       container: {
         fontWeight: 'bold',
+        textAlign: 'center',
       }
     };
   }
