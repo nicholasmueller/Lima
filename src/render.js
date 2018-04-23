@@ -1,6 +1,6 @@
 // renderDOM creates internal instances and mounts nodes to the dom
 
-import { forOwn, forEach, isArray, merge } from 'lodash';
+import { forOwn, forEach, isArray, merge, cloneDeep } from 'lodash';
 import { isLimaComponent, uniqueID } from './helpers';
 import { errors } from './errors';
 
@@ -18,14 +18,24 @@ class CompositeComponent {
     return this.publicInstance;
   }
 
-  updateState(newState) {
-    // publicInstance - update state object directly
-    this.publicInstance.state = merge(this.publicInstance.state, newState);
-
-    console.log('mergedState: ', this.publicInstance.state);
-
-    // update renderedJSX with new state.. call hook before rerender
+  updateState(stateFunc) {
     this.publicInstance.componentWillUpdate && this.publicInstance.componentWillUpdate();
+
+    const prevState = cloneDeep(this.publicInstance.state);
+    const prevProps = cloneDeep(this.publicInstance.props);
+    const newState = stateFunc(prevState, prevProps);
+
+    // naive way to merge state object
+    let updatedState = {};
+    forOwn(prevState, (value, key) => {
+      updatedState[key] = newState.hasOwnProperty(key)
+        ? newState[key]
+        : value
+    });
+    this.publicInstance.state = updatedState;
+
+    this.publicInstance.componentDidUpdate && this.publicInstance.componentDidUpdate();
+    // call render
     this.renderedJsx = this.publicInstance.render();
 
     // update internal instances
@@ -40,6 +50,7 @@ class CompositeComponent {
     this.publicInstance = new this.currentElement.type();
     this.publicInstance.props = this.currentElement.props;
     this.publicInstance.componentWillMount && this.publicInstance.componentWillMount();
+    this.publicInstance.componentDidMount && this.publicInstance.componentDidMount();
     this.renderedJsx = this.publicInstance.render();
 
     // instantiate child (explains why class Component can only have one wrapping div)
@@ -215,7 +226,7 @@ function walkTree(tree, id) {
   }
 }
 
-export function updateTree(element, newState) {
+export function updateTree(element, stateFunc) {
   // invoked from setState from Component baseclass
   const internalInstanceTree = globalTree._internalInstance;
   const elementToUpdate = element.publicID;
@@ -229,8 +240,8 @@ export function updateTree(element, newState) {
   // once we match, then we can call a method on the instance
   // and that method can take care of updating itself and
   // its children if necessary.
-  console.log('matchedInstance: ', matchedInstance);
-  matchedInstance.updateState(newState);
+  // console.log('matchedInstance: ', matchedInstance);
+  matchedInstance.updateState(stateFunc);
 
   // nothing to return, except we trust dom has been updated
   return;

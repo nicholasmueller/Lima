@@ -30,33 +30,37 @@ class App extends Lima.Component {
   }
 
   handleClick() {
-    console.log('old: ', this.state.todoList);
-    const oldList = this.state.todoList;
-
-    const newList = oldList.push(this.state.todoInput);
-    console.log('new: ', this.state);
-
-    this.setState({
-      todoList: newList,
-    })
+    this.setState((prevState, prevProps) => {
+      const newList = prevState.todoList.concat(prevState.todoInput);
+      return {
+        todoInput: '',
+        todoList: newList,
+      }
+    });
   }
 
   handleInputChange(e) {
-    this.setState({
-      todoInput: e.target.value,
+    this.setState((prevState, prevProps) => {
+      return {
+        todoInput: e.target.value,
+      }
+    });
+  }
+
+  deleteItem(index) {
+    this.setState((prevState, prevProps) => {
+      const newList = prevState.todoList.slice(0, index).concat(prevState.todoList.slice(index+1));
+      return {
+        todoList: newList,
+      }
     })
   }
 
-  deleteItem(item) {
-    console.log('delete: ', item);
-  }
-
   render() {
-    console.log('passed to list:', this.state.todoList)
     return (
       <div style={this.styles.container}>
         <div>
-          <Text text="To Do: "/>
+          <Text text="Test"/>
           <Input
             placeholder="Add a todo..."
             onChange={this.handleInputChange}

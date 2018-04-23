@@ -8,6 +8,7 @@ Base Component class
 
 import { updateTree } from './render';
 import { uniqueID } from './helpers';
+import { errors } from './errors';
 
 class Component {
   // flag to identify Lima components
@@ -25,9 +26,15 @@ class Component {
     this.publicID = uniqueID();
   }
 
-  setState(newState) {
+  setState(stateFunc) {
+    // only allow state changes to be made with functions.
+    if(typeof stateFunc !== 'function') {
+      errors.invalidSetState(stateFunc);
+      return;
+    }
+
     // call reRender method in render module passing element ref
-    updateTree(this, newState);
+    updateTree(this, stateFunc);
   }
 }
 Component.usertypes = [];

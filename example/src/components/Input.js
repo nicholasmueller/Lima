@@ -23,7 +23,7 @@ class Input extends Lima.Component {
     return (
       <div style={this.styles.container}>
         <input
-          onChange={this.props.onChange}
+          onchange={this.props.onChange}
           type="text"
           style={this.styles.inputField}
           placeholder={this.props.placeholder}

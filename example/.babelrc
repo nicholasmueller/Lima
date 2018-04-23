@@ -3,8 +3,6 @@
     "es2015-node5"
   ],
   "plugins" : [
-    ["transform-jsx", {
-      "function": "Lima.createElement"
-    }]
+    ["transform-jsx", {"function": "Lima.createElement"}]
   ]
 }

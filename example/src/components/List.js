@@ -13,15 +13,14 @@ class List extends Lima.Component {
   }
 
   render() {
-    console.log('list props: ', this.props);
     return (
       <div>
         <ul>
           {
-            this.props.data.map(item => (
+            this.props.data.map((item, index) => (
               <li
                 style={this.styles.container}
-                onClick={(item) => this.props.deleteItem}
+                onClick={() => this.props.deleteItem(index)}
               >
                 {item}
               </li>
