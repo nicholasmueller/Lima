@@ -13,6 +13,7 @@ class List extends Lima.Component {
   }
 
   render() {
+    console.log('list props: ', this.props);
     return (
       <div>
         <ul>

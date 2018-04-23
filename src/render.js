@@ -22,6 +22,8 @@ class CompositeComponent {
     // publicInstance - update state object directly
     this.publicInstance.state = merge(this.publicInstance.state, newState);
 
+    console.log('mergedState: ', this.publicInstance.state);
+
     // update renderedJSX with new state.. call hook before rerender
     this.publicInstance.componentWillUpdate && this.publicInstance.componentWillUpdate();
     this.renderedJsx = this.publicInstance.render();
@@ -227,6 +229,7 @@ export function updateTree(element, newState) {
   // once we match, then we can call a method on the instance
   // and that method can take care of updating itself and
   // its children if necessary.
+  console.log('matchedInstance: ', matchedInstance);
   matchedInstance.updateState(newState);
 
   // nothing to return, except we trust dom has been updated

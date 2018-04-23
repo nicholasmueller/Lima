@@ -21,7 +21,7 @@ class App extends Lima.Component {
 
     this.state = {
       todoInput: '',
-      todoList: ['john', 'bob', 'mary'],
+      todoList: ['john', 'bob'],
     }
 
     this.handleClick = this.handleClick.bind(this);
@@ -30,8 +30,14 @@ class App extends Lima.Component {
   }
 
   handleClick() {
+    console.log('old: ', this.state.todoList);
+    const oldList = this.state.todoList;
+
+    const newList = oldList.push(this.state.todoInput);
+    console.log('new: ', this.state);
+
     this.setState({
-      todoList: this.state.todoList.push(this.state.todoInput)
+      todoList: newList,
     })
   }
 
@@ -46,6 +52,7 @@ class App extends Lima.Component {
   }
 
   render() {
+    console.log('passed to list:', this.state.todoList)
     return (
       <div style={this.styles.container}>
         <div>
