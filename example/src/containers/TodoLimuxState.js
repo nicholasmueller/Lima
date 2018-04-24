@@ -1,6 +1,9 @@
 // import Lima from 'lima-react';
 import { Lima } from '../../../src/index';
 
+import LimuxStore from '../stores/LimuxStore';
+import todoReducer from '../limux/reducers';
+
 import Text from '../components/Text';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -21,10 +24,10 @@ class TodoLimuxState extends Lima.Component {
       },
     }
 
-    this.state = {
-      todoInput: '',
-      todoList: ['Type and click add', 'Click an item to delete'],
+    this.reducers = {
+      todos: todoReducer,
     }
+    this.store = new LimuxStore(this.reducers);
 
     this.handleClick = this.handleClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -32,34 +35,18 @@ class TodoLimuxState extends Lima.Component {
   }
 
   handleClick() {
-    if (this.state.todoInput.length > 0) {
-      this.setState((prevState, prevProps) => {
-        const newList = prevState.todoList.concat(prevState.todoInput);
-        return {
-          todoInput: '',
-          todoList: newList,
-        }
-      });
-    }
-  }
-
-  handleInputChange(e) {
-    this.setState((prevState, prevProps) => {
-      return {
-        todoInput: e.target.value,
-      }
+    this.store.dispatch({
+      type: 'ADD_TODO',
+      payload: {label: 'Eat Pizza'},
     });
   }
 
+  handleInputChange(e) {
+    console.log(e.target.value);
+  }
+
   deleteItem(index) {
-    this.setState((prevState, prevProps) => {
-      const newList = prevState.todoList
-        .slice(0, index)
-        .concat(prevState.todoList.slice(index+1));
-      return {
-        todoList: newList,
-      }
-    })
+    console.log(index);
   }
 
   render() {
@@ -70,14 +57,14 @@ class TodoLimuxState extends Lima.Component {
           <Input
             placeholder="Add a todo..."
             onChange={this.handleInputChange}
-            value={this.state.todoInput}
+            value={''}
           />
           <Button
             text="Add"
             handleClick={this.handleClick}
           />
           <List
-            data={this.state.todoList}
+            data={[]}
             deleteItem={this.deleteItem}
           />
         </div>
