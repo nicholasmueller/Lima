@@ -4,170 +4,12 @@ import { forOwn, forEach, isArray, cloneDeep } from 'lodash';
 import { isLimaComponent, uniqueID } from './helpers';
 import { errors } from './errors';
 
+import CompositeComponent from './compositeComponent';
+import DOMComponent from './domComponent';
+
 var globalTree;
 
-class CompositeComponent {
-  constructor(element) {
-    this.currentElement = element;
-    this.renderedJsx = null;
-    this.publicInstance = null;
-    this.internalInstance = null;
-  }
-
-  getPublicInstance() {
-    return this.publicInstance;
-  }
-
-  updateState(stateFunc) {
-    this.publicInstance.componentWillUpdate && this.publicInstance.componentWillUpdate();
-
-    const prevState = cloneDeep(this.publicInstance.state);
-    const prevProps = cloneDeep(this.publicInstance.props);
-    const newState = stateFunc(prevState, prevProps);
-
-    // naive way to merge state object
-    let updatedState = {};
-    forOwn(prevState, (value, key) => {
-      updatedState[key] = newState.hasOwnProperty(key)
-        ? newState[key]
-        : value
-    });
-    this.publicInstance.state = updatedState;
-
-    this.publicInstance.componentDidUpdate && this.publicInstance.componentDidUpdate();
-    // call render
-    this.renderedJsx = this.publicInstance.render();
-
-    // update internal instances
-    return this.internalInstance.mount(this.renderedJsx);
-  }
-
-  mount() {
-    // 1. create public instance of current element (this is the class the user has defined)
-    // 2. attach props from the jsx to the instance (make it available to public instance before cwm)
-    // 3. call lifecycle if exists
-    // 4. call the instance render to get the embedded jsx object
-    this.publicInstance = new this.currentElement.type();
-    this.publicInstance.props = this.currentElement.props;
-    this.publicInstance.componentWillMount && this.publicInstance.componentWillMount();
-    this.publicInstance.componentDidMount && this.publicInstance.componentDidMount();
-    this.renderedJsx = this.publicInstance.render();
-
-    // instantiate child (explains why class Component can only have one wrapping div)
-    this.internalInstance = instantiateComponent(this.renderedJsx);
-    return this.internalInstance.mount();
-  }
-
-  // TODO: implement unmount...
-  unmount() {
-    this.publicInstance && this.publicInstance.componentWillUnmount
-      && this.publicInstance.componentWillUnmount();
-    this.internalInstance.unmount();
-  }
-}
-
-class DOMComponent {
-  constructor(element) {
-    this.currentElement = element;
-    this.internalInstances = [];
-    this.node = null;
-  }
-
-  getPublicInstance() {
-    return this.node;
-  }
-
-  mount(newJsx) {
-    // ignore undefined elements that creep in
-    if (typeof this.currentElement.type === 'undefined') {
-      return;
-    }
-
-    // convenience flag to signal if an update mount
-    let initialMount = (typeof newJsx === 'undefined');
-
-    if (initialMount) {
-      this.node = document.createElement(this.currentElement.type)
-    } else {
-      // use already created node
-      this.currentElement = newJsx;
-      this.internalInstances = [];
-    }
-
-    const children = this.currentElement.props.children || [];
-    if(!isArray(children)) {
-      children = [children];
-    }
-
-    // add event listeners and/or set attributes on node
-    forOwn(this.currentElement.props, (value, key) => {
-      if (key.startsWith('on') && initialMount) {
-        // we do NOT re-add event listeners on state updates
-        const eventType = key.toLowerCase().substring(2);
-        this.node.addEventListener(eventType, value);
-      }
-      if (key === 'style') {
-        forOwn(value, (_value, key) => {
-          this.node.style[key] = _value;
-        });
-      }
-      if (
-        key !== 'children'
-        && !key.startsWith('on')
-        && key !== 'style'
-      ) {
-        this.node.setAttribute(key, value);
-      }
-      if (key === 'children') {
-        value.forEach(child => {
-          if (typeof child === 'string' || typeof child === 'number') {
-            this.node.textContent = child;
-          } else if ('type' in child) {
-            const internalInstance = instantiateComponent(child);
-            this.internalInstances.push(internalInstance);
-          } else {
-            errors.invalidObjectChild(child);
-          }
-        });
-
-        const childNodes = [];
-        this.internalInstances.forEach(instance => {
-          // mount pushes another recursive call onto the stack
-          const node = instance.mount();
-          typeof node !== 'undefined' && childNodes.push(node);
-        });
-
-        // replace child node if type/attributes/etc are different on state update
-        if (!initialMount && this.node.hasChildNodes()) {
-          const currentChildren = this.node.childNodes;
-          currentChildren.forEach((currentChild, index) => {
-            if (!currentChild.isEqualNode(childNodes[index])) {
-              // componentwillupdate somehow needs to be hooked here...
-              currentChild.replaceWith(childNodes[index])
-            }
-          })
-        } else {
-          childNodes.forEach(node => {
-            this.node.appendChild(node);
-          });
-        }
-      }
-    });
-    // if this returns, we can pop down the recursive stack
-    return this.node;
-  }
-
-  // TODO: implement unmount
-  unmount() {
-    // recursive if instance is a DOMComponent
-    this.internalInstances.forEach(instance => {
-      // doesnt do anything usefull here...
-      instance.unmount()
-    });
-  }
-}
-
-function instantiateComponent(element) {
+export function instantiateComponent(element) {
   if (isLimaComponent(element)) {
     return new CompositeComponent(element);
   } else {
@@ -244,13 +86,7 @@ export function updateTree(element, stateFunc) {
     console.error('shit... match is off. check walkTree()');
   }
 
-  // once we match, then we can call a method on the instance
-  // and that method can take care of updating itself and
-  // its children if necessary.
-  // console.log('matchedInstance: ', matchedInstance);
   matchedInstance.updateState(stateFunc);
-
-  // nothing to return, except we trust dom has been updated
   return;
 }
 
