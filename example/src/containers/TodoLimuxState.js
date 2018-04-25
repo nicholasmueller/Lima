@@ -1,8 +1,7 @@
 // import Lima from 'lima-react';
 import { Lima } from '../../../src/index';
 
-import LimuxStore from '../stores/LimuxStore';
-import todoReducer from '../limux/reducers';
+import { todoReducer } from '../limux/reducers';
 
 import Text from '../components/Text';
 import Button from '../components/Button';
@@ -24,10 +23,7 @@ class TodoLimuxState extends Lima.Component {
       },
     }
 
-    this.reducers = {
-      todos: todoReducer,
-    }
-    this.store = new LimuxStore(this.reducers);
+    this.store = Lima.createStore(todoReducer);
 
     this.handleClick = this.handleClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -37,12 +33,16 @@ class TodoLimuxState extends Lima.Component {
   handleClick() {
     this.store.dispatch({
       type: 'ADD_TODO',
-      payload: {label: 'Eat Pizza'},
+      payload: this.store.state.input,
     });
+    console.log(this.store.getState());
   }
 
   handleInputChange(e) {
-    console.log(e.target.value);
+    this.store.dispatch({
+      type: 'UPDATE_INPUT',
+      payload: e.target.value,
+    });
   }
 
   deleteItem(index) {
@@ -50,6 +50,7 @@ class TodoLimuxState extends Lima.Component {
   }
 
   render() {
+    console.log(this.store)
     return (
       <div style={this.styles.container}>
         <div>
@@ -57,7 +58,7 @@ class TodoLimuxState extends Lima.Component {
           <Input
             placeholder="Add a todo..."
             onChange={this.handleInputChange}
-            value={''}
+            value={this.store.state.input}
           />
           <Button
             text="Add"

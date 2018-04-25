@@ -1,21 +1,24 @@
-const initialState = {
-  todos: [],
-  input: '',
+const getInitialState = () => {
+  return {
+    todos: [],
+    input: '',
+  }
 };
 
-function todoReducer(state = initialState, action) {
-  switch(action.type) {
-    case 'ADD_TODO': {
-      const data = [...state.todos, action.payload];
+export const todoReducer = (prevState = getInitialState(), action) => {
+  switch (action.type) {
+    case 'ADD_TODO':
+      const nextTodos = [...prevState.todos, action.payload];
       return {
-        ...state,
-        data,
-      };
-    }
+        todos: nextTodos,
+        input: '',
+      }
+    case 'UPDATE_INPUT':
+      return {
+        todos: prevState.todos,
+        input: action.payload,
+      }
+    default:
+      return prevState;
   }
-
-  // return default state if no action match
-  return state;
 }
-
-export default todoReducer;
