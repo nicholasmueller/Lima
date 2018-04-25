@@ -1,7 +1,7 @@
 // import Lima from 'lima-react';
 import { Lima } from '../../../src/index';
 
-import { todoReducer } from '../limux/reducers';
+import { todoReducer, initialState } from '../limux/reducers';
 
 import Text from '../components/Text';
 import Button from '../components/Button';
@@ -23,7 +23,10 @@ class TodoLimuxState extends Lima.Component {
       },
     }
 
-    this.store = Lima.createStore(todoReducer);
+    this.store = Lima.createStore(todoReducer, initialState);
+    this.store.subscribe(() => {
+      // function that triggers repaint needed
+    });
 
     this.handleClick = this.handleClick.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -46,11 +49,14 @@ class TodoLimuxState extends Lima.Component {
   }
 
   deleteItem(index) {
-    console.log(index);
+    this.store.dispatch({
+      type: 'DELETE_TODO',
+      payload: index,
+    });
+    console.log(this.store.getState());
   }
 
   render() {
-    console.log(this.store)
     return (
       <div style={this.styles.container}>
         <div>
@@ -65,7 +71,7 @@ class TodoLimuxState extends Lima.Component {
             handleClick={this.handleClick}
           />
           <List
-            data={[]}
+            data={this.store.state.todos}
             deleteItem={this.deleteItem}
           />
         </div>
