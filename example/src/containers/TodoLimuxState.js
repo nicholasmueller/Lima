@@ -25,7 +25,10 @@ class TodoLimuxState extends Lima.Component {
 
     this.store = Lima.createStore(todoReducer, initialState);
     this.store.subscribe(() => {
-      // function that triggers repaint needed
+      // force repaint
+      this.setState((prevState, prevProps) => {
+        this.store.getState();
+      });
     });
 
     this.handleClick = this.handleClick.bind(this);
@@ -38,7 +41,6 @@ class TodoLimuxState extends Lima.Component {
       type: 'ADD_TODO',
       payload: this.store.state.input,
     });
-    console.log(this.store.getState());
   }
 
   handleInputChange(e) {
@@ -53,7 +55,6 @@ class TodoLimuxState extends Lima.Component {
       type: 'DELETE_TODO',
       payload: index,
     });
-    console.log(this.store.getState());
   }
 
   render() {

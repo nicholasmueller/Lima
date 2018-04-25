@@ -20,7 +20,6 @@ export const createStore = (reducer, initialState) => {
 };
 
 
-
 // https://toddmotto.com/redux-typescript-store
 
 export class LimuxStore {
