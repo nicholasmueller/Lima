@@ -1,4 +1,5 @@
 // https://levelup.gitconnected.com/learn-redux-by-building-redux-from-scratch-dcbcbd31b0d0
+// simple functional implementation
 
 export const createStore = (reducer, initialState) => {
   const store = {};
@@ -21,6 +22,7 @@ export const createStore = (reducer, initialState) => {
 
 
 // https://toddmotto.com/redux-typescript-store
+// class implementaiton (not used)
 
 export class LimuxStore {
   constructor(reducers = {}, initialState = {}) {
@@ -62,3 +64,6 @@ export class LimuxStore {
     };
   }
 }
+
+// function to inject Limux store into every component on internal tree
+// use context function on component base class

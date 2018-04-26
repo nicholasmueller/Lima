@@ -22,5 +22,5 @@
   - Lima can't handle self-closing tags on native elements, like input etc. so make sure you explicitly close these tags... <input></input>
 
 # Roadmap & Goals
-- 'Bake-in' a react-router rewrite
 - 'Bake-in' a redux rewrite
+- 'Bake-in' a react-router rewrite

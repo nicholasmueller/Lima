@@ -36,7 +36,6 @@ function renderDOM(element, rootNode) {
 }
 
 function unmountDOM(rootNode) {
-  console.log('unmountDOM called');
   const node = rootNode.firstChild;
   const rootInternalInstance = node._internalInstance;
 
@@ -64,7 +63,7 @@ function walkTree(tree, id) {
     // recurse and push another stack frame
     return walkTree(tree.internalInstance, id);
   } else {
-    console.warn('oops, check walkTree()');
+    errors.noInternalInstance();
     return null;
   }
 }
@@ -83,7 +82,7 @@ export function updateTree(element, stateFunc) {
 
   // sanity check to make sure we are actually matching
   if (matchedInstance.publicInstance.publicID !== elementToUpdate) {
-    console.error('shit... match is off. check walkTree()');
+    errors.invalidMatch(matchedInstance, elementToUpdate);
   }
 
   matchedInstance.updateState(stateFunc);
