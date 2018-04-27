@@ -17,5 +17,8 @@ export const errors = {
   noInternalInstance: () => {
     console.warn(`Lima Warning! No internal instance found recursing the internal tree.
     Check the walkTree() method defined in render.js`)
-  }
+  },
+  invalidContext: (incomingContext) => {
+    console.warn(`Lima Warning! Context is required to be of type object.`)
+  },
 };

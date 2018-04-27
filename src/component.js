@@ -36,6 +36,15 @@ class Component {
     // call reRender method in render module passing element ref
     updateTree(this, stateFunc);
   }
+
+  setContext(incomingContext) {
+    // incomingContext should be an object
+    if(typeof incomingContext !== 'object') {
+      errors.invalidContext();
+      return;
+    }
+    // https://repl.it/repls/MagentaSorrowfulDoom
+  }
 }
 Component.usertypes = [];
 
