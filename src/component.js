@@ -37,6 +37,7 @@ class Component {
     updateTree(this, stateFunc);
   }
 
+  // TODO: implement application context
   setContext(incomingContext) {
     // incomingContext should be an object
     if(typeof incomingContext !== 'object') {

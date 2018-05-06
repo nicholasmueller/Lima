@@ -24,7 +24,8 @@ class TodoLimuxState extends Lima.Component {
     }
 
     this.store = Lima.createStore(todoReducer, initialState);
-    // this.store = new LimuxStore(reducers, initialState);
+    // const reducers = { todos }
+    // this.store = new Lima.LimuxStore(reducers, initialState);
 
     this.store.subscribe(() => {
       // force repaint

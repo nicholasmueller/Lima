@@ -5,7 +5,10 @@ import renderDOM from './render';
 import { initialize } from './helpers';
 
 // Limux API
-import { createStore } from './limux';
+import { createStore, LimuxStore } from './limux';
+
+// Router API
+import { Route } from './router';
 
 // API export
 export const Lima = {
@@ -14,4 +17,6 @@ export const Lima = {
   renderDOM,
   initialize,
   createStore,
+  LimuxStore,
+  Route,
 }

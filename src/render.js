@@ -39,7 +39,6 @@ function unmountDOM(rootNode) {
   const node = rootNode.firstChild;
   const rootInternalInstance = node._internalInstance;
 
-  // erm.. what the hell does unmount here do?
   rootInternalInstance.unmount();
   rootNode.innerHTML = '';
 }

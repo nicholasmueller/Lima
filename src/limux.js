@@ -22,13 +22,14 @@ export const createStore = (reducer, initialState) => {
 
 
 // https://toddmotto.com/redux-typescript-store
-// class implementaiton (not used)
+// class implementaiton
 
 export class LimuxStore {
   constructor(reducers = {}, initialState = {}) {
     this.initialState = initialState;
     this.reducers = reducers;
 
+    // state initialized on new store instance
     this.state = this.reduce(initialState, {});
     this.subscribers = [];
   }
@@ -44,11 +45,11 @@ export class LimuxStore {
   }
 
   // root reducer
-  reduce(state, action) {
+  reduce(initialState, action) {
     // calculate and return new state
     const newState = {};
-    for (const prop in this.reducers) {
-      newState[prop] = this.reducers[prop](state[prop], action);
+    for (let key in this.reducers) {
+      newState[key] = this.reducers[key](initialState, action);
     }
     return newState;
   }
