@@ -1,4 +1,4 @@
-// Lima API
+// Lima API (class based)
 import Component from './component';
 import createElement from './createElement';
 import renderDOM from './render';
@@ -8,7 +8,7 @@ import { initialize } from './helpers';
 import { createStore, LimuxStore } from './limux';
 
 // Router API
-import { Route } from './router';
+// import { Route } from './router';
 
 // API export
 export const Lima = {
@@ -18,5 +18,5 @@ export const Lima = {
   initialize,
   createStore,
   LimuxStore,
-  Route,
+  // Route
 }
